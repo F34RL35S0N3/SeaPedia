@@ -18,6 +18,9 @@ model User {
   roles       UserRole[]
   reviews     ApplicationReview[]
   store       Store?    @relation("SellerStore")
+  wallet      Wallet?
+  cartItems   CartItem[]
+  orders      Order[]
 }
 
 model UserRole {
@@ -52,6 +55,7 @@ model Store {
 
   seller      User      @relation("SellerStore", fields: [sellerId], references: [id])
   products    Product[]
+  orders      Order[]
 }
 
 model Product {
@@ -67,4 +71,50 @@ model Product {
   updatedAt   DateTime  @updatedAt
 
   store       Store     @relation(fields: [storeId], references: [id])
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  balance   Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  userId        String
+  storeId       String
+  totalAmount   Float
+  status        String      @default("PENDING")
+  deliveryAddress String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          User        @relation(fields: [userId], references: [id])
+  store         Store       @relation(fields: [storeId], references: [id])
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
 }

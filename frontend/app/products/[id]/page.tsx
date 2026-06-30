@@ -31,8 +31,13 @@ export default function ProductDetail() {
   if (loading) return <div className="p-8 text-center">Loading...</div>;
   if (!product) return <div className="p-8 text-center">Produk tidak ditemukan</div>;
 
-  const handleAddToCart = () => {
-    toast.success('Ditambahkan ke keranjang!');
+  const handleAddToCart = async () => {
+    try {
+      await api.post('/cart', { productId: product.id, quantity: 1 });
+      toast.success('Ditambahkan ke keranjang!');
+    } catch (e: any) {
+      toast.error(e.response?.data?.error || 'Gagal menambahkan ke keranjang');
+    }
   };
 
   return (
