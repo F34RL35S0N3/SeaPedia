@@ -50,6 +50,13 @@ router.post('/vouchers', verifyToken, requireRole('ADMIN'), createVoucher);
 router.get('/vouchers', getVouchers); // public to see vouchers? Yes.
 router.delete('/vouchers/:id', verifyToken, requireRole('ADMIN'), deleteVoucher);
 
+// Delivery (Driver)
+import { getAvailableJobs, getMyJobs, acceptJob, updateJobStatus as updateDeliveryStatus } from '../controllers/delivery.controller';
+router.get('/delivery/available', verifyToken, requireRole('DRIVER'), getAvailableJobs);
+router.get('/delivery/my', verifyToken, requireRole('DRIVER'), getMyJobs);
+router.post('/delivery/:id/accept', verifyToken, requireRole('DRIVER'), acceptJob);
+router.put('/delivery/:id/status', verifyToken, requireRole('DRIVER'), updateDeliveryStatus);
+
 // Reviews
 router.post('/reviews', (req, res, next) => { verifyToken(req, res, (err) => { if (err) return next(); next(); }); }, createReview);
 router.get('/reviews', getReviews);

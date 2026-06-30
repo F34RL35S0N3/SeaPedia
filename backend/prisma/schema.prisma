@@ -21,6 +21,7 @@ model User {
   wallet      Wallet?
   cartItems   CartItem[]
   orders      Order[]
+  deliveries  DeliveryJob[]
 }
 
 model UserRole {
@@ -109,6 +110,7 @@ model Order {
   store         Store       @relation(fields: [storeId], references: [id])
   voucher       Voucher?    @relation(fields: [voucherId], references: [id])
   items         OrderItem[]
+  deliveryJob   DeliveryJob?
 }
 
 model OrderItem {
@@ -133,4 +135,15 @@ model Voucher {
   updatedAt       DateTime @updatedAt
   
   orders          Order[]
+}
+
+model DeliveryJob {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  driverId  String?
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  driver    User?    @relation(fields: [driverId], references: [id])
 }

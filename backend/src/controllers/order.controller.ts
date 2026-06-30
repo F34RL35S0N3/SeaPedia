@@ -185,9 +185,20 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     return res.status(400).json({ error: `Transisi status dari ${order.status} ke ${status} tidak valid` });
   }
 
-  const updated = await prisma.order.update({
-    where: { id },
-    data: { status },
+  const updated = await prisma.$transaction(async (tx) => {
+    const updatedOrder = await tx.order.update({
+      where: { id },
+      data: { status },
+    });
+
+    if (status === 'SHIPPED') {
+      await tx.deliveryJob.create({
+        data: { orderId: order.id },
+      });
+    }
+
+    return updatedOrder;
   });
+
   res.json(updated);
 };
