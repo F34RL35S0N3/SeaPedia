@@ -13,6 +13,7 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [address, setAddress] = useState('');
+  const [voucherCode, setVoucherCode] = useState('');
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const links = [
@@ -52,7 +53,9 @@ export default function CartPage() {
     
     setCheckoutLoading(true);
     try {
-      await api.post('/checkout', { deliveryAddress: address });
+      const payload: any = { deliveryAddress: address };
+      if (voucherCode) payload.voucherCode = voucherCode;
+      await api.post('/checkout', payload);
       toast.success('Checkout berhasil!');
       router.push('/buyer/orders');
     } catch (e: any) {
@@ -108,6 +111,14 @@ export default function CartPage() {
                 <span className="font-bold text-blue-600">Rp {total.toLocaleString('id-ID')}</span>
               </div>
               <form onSubmit={handleCheckout} className="space-y-4 mt-6">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Kode Voucher</label>
+                  <Input 
+                    placeholder="Masukkan kode voucher"
+                    value={voucherCode} 
+                    onChange={e => setVoucherCode(e.target.value.toUpperCase())}
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Alamat Pengiriman</label>
                   <textarea 

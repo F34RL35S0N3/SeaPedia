@@ -33,6 +33,9 @@ router.get('/stores/my', verifyToken, requireRole('SELLER'), getMyStore);
 router.put('/stores/my', verifyToken, requireRole('SELLER'), updateStore);
 router.get('/stores/:id', getStoreById);
 
+router.get('/orders/seller', verifyToken, requireRole('SELLER'), getSellerOrders);
+router.put('/orders/seller/:id/status', verifyToken, requireRole('SELLER'), updateOrderStatus);
+
 // Products
 router.post('/products', verifyToken, requireRole('SELLER'), createProduct);
 router.get('/products/my', verifyToken, requireRole('SELLER'), getMyProducts);
@@ -40,6 +43,12 @@ router.put('/products/:id', verifyToken, requireRole('SELLER'), updateProduct);
 router.delete('/products/:id', verifyToken, requireRole('SELLER'), deleteProduct);
 router.get('/products', getProducts);
 router.get('/products/:id', getProductById);
+
+// Vouchers (Admin only)
+import { createVoucher, getVouchers, deleteVoucher } from '../controllers/voucher.controller';
+router.post('/vouchers', verifyToken, requireRole('ADMIN'), createVoucher);
+router.get('/vouchers', getVouchers); // public to see vouchers? Yes.
+router.delete('/vouchers/:id', verifyToken, requireRole('ADMIN'), deleteVoucher);
 
 // Reviews
 router.post('/reviews', (req, res, next) => { verifyToken(req, res, (err) => { if (err) return next(); next(); }); }, createReview);
