@@ -44,6 +44,13 @@ router.delete('/products/:id', verifyToken, requireRole('SELLER'), deleteProduct
 router.get('/products', getProducts);
 router.get('/products/:id', getProductById);
 
+// Admin Monitoring
+import { getUsers, getStores, getAllOrders, getDeliveryJobs } from '../controllers/admin.controller';
+router.get('/admin/users', verifyToken, requireRole('ADMIN'), getUsers);
+router.get('/admin/stores', verifyToken, requireRole('ADMIN'), getStores);
+router.get('/admin/orders', verifyToken, requireRole('ADMIN'), getAllOrders);
+router.get('/admin/delivery-jobs', verifyToken, requireRole('ADMIN'), getDeliveryJobs);
+
 // Vouchers (Admin only)
 import { createVoucher, getVouchers, deleteVoucher } from '../controllers/voucher.controller';
 router.post('/vouchers', verifyToken, requireRole('ADMIN'), createVoucher);
