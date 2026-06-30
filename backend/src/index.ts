@@ -18,7 +18,12 @@ const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30, message: { er
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
+import { errorHandler } from './middlewares/errorHandler';
+
 app.use('/api', router);
+
+// Error handling middleware should be the last middleware
+app.use(errorHandler);
 
 // Cron Job: Check overdue orders every hour
 cron.schedule('0 * * * *', async () => {
